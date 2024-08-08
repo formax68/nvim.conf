@@ -1,10 +1,6 @@
 return {
-	{ "ellisonleao/gruvbox.nvim", priority = 1000 , config = true, opts = ...},
-    {
-  "folke/tokyonight.nvim",
-  lazy = false,
-  priority = 1000,
-  opts = {},
+  "Mofiqul/dracula.nvim",
+  config = function()
+    vim.cmd("colorscheme dracula")
+  end
 }
-}
-
