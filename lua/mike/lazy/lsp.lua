@@ -29,6 +29,10 @@ return {
                 "lua_ls",
                 "rust_analyzer",
                 "gopls",
+                "powershell_es",
+                "cssls",
+                "jsonls",
+                "html",
             },
             handlers = {
                 function(server_name) -- default handler (optional)
