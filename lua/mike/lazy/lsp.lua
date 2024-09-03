@@ -1,41 +1,71 @@
 return {
-    {
+  {
     "williamboman/mason.nvim",
-    config = function ()
-            require("mason").setup()
-    end
-    },
-    {
+    config = function()
+      require("mason").setup()
+    end,
+  },
+  {
     "williamboman/mason-lspconfig.nvim",
-    config = function ()
-        require("mason-lspconfig").setup({
-            ensure_installed = {
-                    "lua_ls",
-                    "tsserver",
-                    "rust_analyzer",
-                    "powershell_es",
-                    "pyright",
-                    "bashls",
-                }
-        })
-        end
+    config = function()
+      require("mason-lspconfig").setup({
+        ensure_installed = {
+          "lua_ls",
+          "tsserver",
+          "rust_analyzer",
+          "powershell_es",
+          "jedi_language_server",
+          "bashls",
+        },
+      })
+    end,
+  },
+  {
+    "neovim/nvim-lspconfig",
+    dependencies = {
+      "hrsh7th/cmp-nvim-lsp",
+      "hrsh7th/cmp-buffer",
+      "hrsh7th/cmp-path",
+      "hrsh7th/cmp-cmdline",
+      "hrsh7th/nvim-cmp",
     },
-    {
-        "neovim/nvim-lspconfig",
-        config = function()
-            local lspconfig = require("lspconfig")
-            lspconfig.lua_ls.setup({})
-            lspconfig.tsserver.setup({})
-            lspconfig.rust_analyzer.setup({})
-            lspconfig.powershell_es.setup({
-                bundle_path = '~/PowerShellEditorServices',
+    config = function()
+      local cmp = require('cmp')
+      local cmp_lsp = require("cmp_nvim_lsp")
+      local lspconfig = require("lspconfig")
+      lspconfig.lua_ls.setup({})
+      lspconfig.tsserver.setup({})
+      lspconfig.rust_analyzer.setup({})
+      lspconfig.powershell_es.setup({
+        bundle_path = "~/PowerShellEditorServices",
+      })
+      lspconfig.jedi_language_server.setup({})
+      lspconfig.jsonls.setup({})
+      lspconfig.bashls.setup({})
+      local cmp_select = { behavior = cmp.SelectBehavior.Select }
+
+        cmp.setup({
+            snippet = {
+                expand = function(args)
+                    require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+                end,
+            },
+            mapping = cmp.mapping.preset.insert({
+                ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
+                ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
+                ['<C-y>'] = cmp.mapping.confirm({ select = true }),
+                ["<C-Space>"] = cmp.mapping.complete(),
+            }),
+            sources = cmp.config.sources({
+                { name = 'nvim_lsp' },
+                { name = 'luasnip' }, -- For luasnip users.
+            }, {
+                { name = 'buffer' },
             })
-            lspconfig.pyright.setup({})
-            lspconfig.jsonls.setup({})
-            lspconfig.bashls.setup({})
-            vim.keymap.set('n', 'K', vim.lsp.buf.hover, {})
-            vim.keymap.set('n', 'gd', vim.lsp.buf.definition, {})
-            vim.keymap.set({'n', 'v'}, '<leader>ca', vim.lsp.buf.code_action, {})
-        end
-    }
+        })
+      vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
+      vim.keymap.set("n", "gd", vim.lsp.buf.definition, {})
+      vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, {})
+    end,
+  },
 }
